@@ -3,15 +3,23 @@ package core;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Node {
+public class Node implements Comparable<Node> {
     public Queue<Node> children;
     public Board board;
     public Visit visit;
+    public int moves;
+    public Node previous;
 
     public Node(Board board) {
         this.board = board;
         this.children = new LinkedList<>();
         this.visit = Visit.UNVISITED;
+    }
+
+    public Node(Board b, Node prev, int m){
+        board = b;
+        previous = prev;
+        moves = m;
     }
 
     public void branch(char sequence[]) {
@@ -81,5 +89,15 @@ public class Node {
 
     public boolean isGoal () {
         return board.isCorrect();
+    }
+
+    public int compareTo(Node that){
+        //StdOut.println("i:" + this.priority() + " j:" + that.priority() + " "+ ((this.priority() > that.priority()) ? 1 :  -1));
+        if(this.priority() == that.priority()) return 0;
+        return (this.priority() > that.priority()) ? 1 :  -1;
+    }
+
+    public int priority(){
+        return board.manhattan() + moves;
     }
 }

@@ -1,5 +1,8 @@
 package core;
 
+import java.util.Arrays;
+import java.util.Stack;
+
 /***
  * This class represents a board.
  */
@@ -9,6 +12,8 @@ public class Board implements Cloneable{
     private int width;          //number of columns of puzzle
     private int height;         //number of rows of puzzle
     public int tiles[][];       //represents tiles on the board
+    private int hamming;
+    private int manhattan;
 
     public class ZeroPosition {
         public int y;
@@ -109,6 +114,9 @@ public class Board implements Cloneable{
         swapZeroWith(zero.x, (zero.y + 1));
     }
 
+
+
+
     public boolean isCorrect() {
         if (zeroOnBadPosition()) {
             return false;
@@ -146,6 +154,7 @@ public class Board implements Cloneable{
         return boardCopy;
     }
 
+
     @Override
     public String toString() {
         StringBuilder boardInfo = new StringBuilder();
@@ -158,4 +167,123 @@ public class Board implements Cloneable{
 
         return boardInfo.toString();
     }
+// added
+
+    public int[][] swap(int[][] board, int rowOffset, int colOffset){
+        int[][] tempBoard =  deepCopy(board);
+        tempBoard[zero.x][zero.y]= tiles[zero.x+rowOffset][zero.y+colOffset];
+        tempBoard[zero.x+rowOffset][zero.y+colOffset]=0;
+
+        return tempBoard;
+    }
+
+    public int manhattan(){
+        int arrayPosition;
+        int tile;
+        manhattan = 0;
+        for(int i = 0; i <width; i++){
+            for(int j = 0; j<height; j++){
+                tile = tiles[i][j];
+                if(tile == 0)
+                    continue;
+                arrayPosition = 1+ j +(i*this.width);
+
+                if(arrayPosition-tile == 0)
+                    continue;
+                double ii = Math.floor(((double)(tile-1))/this.width);
+                double jj = (tile-1)%this.width;
+                manhattan +=  (Math.abs(i-ii)+Math.abs(j-jj));
+                //StdOut.println("Tile:" + tile + " [MOVES:"+ (Math.abs(i-ii)+Math.abs(j-jj))+"]       | Offsets: i "+  Math.abs(i-ii) + " j "+  Math.abs(j-jj));
+            }
+        }
+        return manhattan;
+    }
+
+    public int hamming(){
+        int arrayPosition;
+        int tile;
+        int displaced =0;
+
+        for(int i = 0; i <width; i++){
+            for(int j = 0; j<height; j++){
+                tile = tiles[i][j];
+                if(tile ==0)
+                    continue;
+                arrayPosition = 1+ j +(i*this.width);
+
+                if(tile != arrayPosition)
+                    displaced++;
+                else
+                    continue;
+            }
+        }
+        return displaced;
+    }
+
+
+    private int[][]deepCopy(int[][] array){
+        int[][] copy = new int[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                copy[i][j] =array[i][j];
+            }
+        }
+        return copy;
+    }
+
+    public Board twin() {
+        int[][] twin = deepCopy(tiles);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (tiles[i][j] != 0 && tiles[i][j + 1] != 0 && j < (width - 1)) {
+                    int swap = twin[i][j];
+                    twin[i][j] = twin[i][j + 1];
+                    twin[i][j + 1] = swap;
+                    return new Board(twin);
+                }
+            }
+        }
+        return new Board(twin);
+    }
+
+    public boolean equals(Object y){
+        Board that = (Board) y;
+        if (y == null) return false;
+        if (this == y) return true;
+        if (this.getClass() != y.getClass()) return false;
+        if (that.width != this.width) return false;
+
+        return Arrays.deepEquals(this.tiles, that.tiles );
+    }
+
+    public Iterable<Board> neighbors(){
+        Stack<Board> boards = new Stack<Board>();
+
+        if(zero.x > 0){
+            Board boardUP = new Board(swap(tiles,-1,0));
+            boards.push(boardUP);
+        }
+
+        if(zero.x < width-1){
+            Board boardDown = new Board(swap(tiles,1,0));
+            boards.push(boardDown);
+        }
+
+        if(zero.y > 0){
+            Board boardLeft = new Board(swap(tiles,0,-1));
+            boards.push(boardLeft);
+        }
+
+        if(zero.y < width-1){
+            Board boardRight = new Board(swap(tiles,0,1));
+            boards.push(boardRight);
+        }
+
+        return boards;
+
+    }
+
+
+
+
 }

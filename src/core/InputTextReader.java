@@ -12,7 +12,7 @@ public class InputTextReader {
     public InputTextReader(String fileName) {
         this.fileName = fileName;
         try {
-            scanner = new Scanner(new File(fileName)).useDelimiter("\\s");
+            scanner = new Scanner(new File(fileName));//.useDelimiter("\\s");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
