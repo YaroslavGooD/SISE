@@ -13,7 +13,8 @@ public class Main {
         Board board = new Board(tiles);
 
         //ISolver solution = new DepthFirstSearch(board, sequence);
-        ISolver solution = new BreadthFirstSearch(board, sequence);
+//        ISolver solution = new BreadthFirstSearch(board, sequence);
+        ISolver solution = new AStar(board, sequence, "manch");
         solution.run();
     }
 }

@@ -1,5 +1,10 @@
 package core;
 
+import comparators.ComparatorPriorityHam;
+import comparators.ComparatorPriorityManch;
+
+import java.util.Comparator;
+
 /***
  * This class represents a board.
  */
@@ -9,6 +14,7 @@ public class Board implements Cloneable {
     private int width;          //number of columns of puzzle
     private int height;         //number of rows of puzzle
     public int tiles[][];       //represents tiles on the board
+    private int distance;
 
     public class ZeroPosition {
         public int y;
@@ -152,13 +158,53 @@ public class Board implements Cloneable {
     @Override
     public String toString() {
         StringBuilder boardInfo = new StringBuilder();
-        for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
+        for (int row = 0; row < width; row++) {
+            for (int col = 0; col < height; col++) {
                 boardInfo.append(tiles[col][row] + " ");
             }
             boardInfo.append("\n");
         }
 
         return boardInfo.toString();
+    }
+    public int manhattan(){
+        int tile;
+        distance = 0;
+        for(int i = 0; i <width; i++){
+            for(int j = 0; j<height; j++) {
+                tile = tiles[i][j];
+                if (tile == 0) {
+                    distance += height - 1 - j + (width - 1 - i);
+                } else {
+                    distance += Math.abs(i - Math.floor((tile - 1) / height)) +
+                            Math.abs(j - ((tile - 1) % width));
+                }
+            }
+        }
+        return distance;
+    }
+
+    public int hamming(){
+        int tile;
+        distance = 0;
+        for(int i = 0; i <width; i++){
+            for(int j = 0; j <height; j++){
+                tile = tiles[i][j];
+                if(tile == 0 && j != width - 1 && i != height - 1) {
+                    distance++;
+                } else if(tile != 0 && tile != width * i + j + 1) {
+                    distance++;
+                }
+            }
+        }
+        return distance;
+    }
+
+    public Comparator<Node> selected(String metrix) {
+        if(metrix.compareTo("manch") == 0) {
+            return new ComparatorPriorityManch();
+        } else {
+            return  new ComparatorPriorityHam();
+        }
     }
 }
