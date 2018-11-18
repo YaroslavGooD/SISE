@@ -1,7 +1,7 @@
 package solutions;
 
 
-import comparator.ComparatorPriorityHam;
+import comparator.ComparatorPriority;
 import core.Board;
 import core.Node;
 import core.Visit;
@@ -18,7 +18,7 @@ public class AStar extends BruteForceSolution{
     public AStar(Board board, char[] sequence, String metrix) {
         super(board, sequence);
         this.metrix = metrix;
-        list = new PriorityQueue<Node>(new ComparatorPriorityHam());
+        list = new PriorityQueue<Node>(new ComparatorPriority());
     }
 
     public void run() {
@@ -59,7 +59,7 @@ public class AStar extends BruteForceSolution{
         while(list.size() > 0) {
             Node n = list.poll();
             inProgressStateCounter++;
-            n.visit = Visit.INPROGRESS;
+            n.visit = Visit.VISITED;
             if(n.recursionDepth < recursionDepthLimit) {
                 n.branch(sequence);
                 for (Node k : n.children) {
@@ -72,8 +72,7 @@ public class AStar extends BruteForceSolution{
                         maxRecursionDepth = k.recursionDepth;
                         throw new StopRecursionException("Recursion has ended.");
                     }
-
-                    if(metrix.compareTo("manch") == 0) {
+                    if(metrix.compareTo("manh") == 0) {
                         k.board.manhattan();
                     }
                     else {

@@ -14,7 +14,7 @@ public class Main {
 
 //        ISolver solution = new DepthFirstSearch(board, sequence);
 //        ISolver solution = new BreadthFirstSearch(board, sequence);
-        ISolver solution = new AStar(board, sequence, "hamm");
+        ISolver solution = new AStar(board, sequence, "manch");
         solution.run();
     }
 }

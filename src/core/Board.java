@@ -170,24 +170,24 @@ public class Board implements Cloneable {
             for (int j = 0; j < height; j++) {
                 tile = tiles[i][j];
                 if (tile == 0) {
-                    distance += height - 1 - i + (width - 1 - j);
+                    distance += height - 1 - j + (width - 1 - i);
                 } else {
                     distance += Math.abs(j - Math.floor((tile - 1) / height)) +
-                            Math.abs(i - ((tile - 1) % height));
+                            Math.abs(i - ((tile - 1) % width));
                 }
             }
         }
     }
 
-    public void hamming() {
+    public void hamming(){
         int tile;
         distance = 0;
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                tile = tiles[i][j];
-                if (tile == 0 && i != width - 1 && j != height - 1) {
+        for (int y = 0; y < width; y++) {
+            for (int x = 0; x < height; x++) {
+                tile = tiles[y][x];
+                if(y != width - 1 && x != height - 1 && tile == 0) {
                     distance++;
-                } else if (tile != 0 && tile != width * j + i + 1) {
+                } else if(tile != width*x+y+1 && tile != 0) {
                     distance++;
                 }
             }
