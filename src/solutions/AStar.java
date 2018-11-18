@@ -1,6 +1,7 @@
 package solutions;
 
 
+import comparator.ComparatorPriorityHam;
 import core.Board;
 import core.Node;
 import core.Visit;
@@ -16,7 +17,8 @@ public class AStar extends BruteForceSolution{
 
     public AStar(Board board, char[] sequence, String metrix) {
         super(board, sequence);
-        list = new PriorityQueue<Node>(board.selected(metrix));
+        this.metrix = metrix;
+        list = new PriorityQueue<Node>(new ComparatorPriorityHam());
     }
 
     public void run() {
@@ -69,6 +71,13 @@ public class AStar extends BruteForceSolution{
                         sumUpSolution(k);
                         maxRecursionDepth = k.recursionDepth;
                         throw new StopRecursionException("Recursion has ended.");
+                    }
+
+                    if(metrix.compareTo("manch") == 0) {
+                        k.board.manhattan();
+                    }
+                    else {
+                        k.board.hamming();
                     }
                     k.visit = Visit.VISITED;
                     visitedStateCounter++;

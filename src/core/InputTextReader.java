@@ -27,7 +27,7 @@ public class InputTextReader {
         this.elements = new ArrayList<>();
 
         try {
-            scanner = new Scanner(new File(fileName)).useDelimiter("\\s");
+            scanner = new Scanner(new File(fileName));//.useDelimiter("\\s");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
