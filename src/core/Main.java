@@ -6,7 +6,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        InputTextReader itr = new InputTextReader("src/files/a.txt");
+        InputTextReader itr = new InputTextReader("src/files/example15puzzle.txt");
         int tiles[][] = itr.loadInputFileToBoard();
         char[] sequence = {'R', 'L', 'U', 'D'};
 

@@ -185,11 +185,9 @@ public class Board implements Cloneable {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 tile = tiles[i][j];
-                if (i != width - 1 && j != height - 1) {
-                    if (tile != 0) {
-                        distance++;
-                    }
-                } else if (tile != width * j + i + 1) {
+                if (tile == 0 && i != width - 1 && j != height - 1) {
+                    distance++;
+                } else if (tile != 0 && tile != width * j + i + 1) {
                     distance++;
                 }
             }
