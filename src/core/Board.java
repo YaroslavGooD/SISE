@@ -153,8 +153,8 @@ public class Board implements Cloneable {
     @Override
     public String toString() {
         StringBuilder boardInfo = new StringBuilder();
-        for (int row = 0; row < width; row++) {
-            for (int col = 0; col < height; col++) {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
                 boardInfo.append(tiles[col][row] + " ");
             }
             boardInfo.append("\n");
@@ -170,7 +170,7 @@ public class Board implements Cloneable {
             for (int j = 0; j < height; j++) {
                 tile = tiles[i][j];
                 if (tile == 0) {
-                    distance += height - 1 - j + (width - 1 - i);
+                    distance += height - 1 - i + (width - 1 - j);
                 } else {
                     distance += Math.abs(j - Math.floor((tile - 1) / height)) +
                             Math.abs(i - ((tile - 1) % width));
@@ -179,15 +179,16 @@ public class Board implements Cloneable {
         }
     }
 
-    public void hamming(){
+
+    public void hamming() {
         int tile;
         distance = 0;
         for (int y = 0; y < width; y++) {
             for (int x = 0; x < height; x++) {
                 tile = tiles[y][x];
-                if(y != width - 1 && x != height - 1 && tile == 0) {
+                if (y != width - 1 && x != height - 1 && tile == 0) {
                     distance++;
-                } else if(tile != width*x+y+1 && tile != 0) {
+                } else if (tile != width * x + y + 1 && tile != 0) {
                     distance++;
                 }
             }

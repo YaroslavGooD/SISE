@@ -6,10 +6,12 @@ import core.Visit;
 import exceptions.StopRecursionException;
 import solutions.BruteForceSolution;
 
+import java.io.IOException;
+
 public class DepthFirstSearch extends BruteForceSolution {
 
-    public DepthFirstSearch(Board board, char[] sequence) {
-        super(board, sequence);
+    public DepthFirstSearch(Board board, char[] sequence, String filename) {
+        super(board, sequence, filename);
     }
 
     public void run() {
@@ -22,6 +24,7 @@ public class DepthFirstSearch extends BruteForceSolution {
         for (Node n : root.children) {
             if (n.isGoal()) {
                 showStats();
+                write(n);
                 return;
             }
         }
@@ -40,6 +43,16 @@ public class DepthFirstSearch extends BruteForceSolution {
         }
 
         showStats();
+        write(root);
+    }
+
+    public void write(Node c) {
+        try {
+            writeSolution(c, "dfs" + root.board.getWidth() + "x" + root.board.getHeight() + "_sol");
+            writeStats(c, "dfs" + root.board.getWidth() + "x" + root.board.getHeight() + "_stats" );
+        } catch (IOException e) {
+            e.getMessage();
+        }
     }
 
     /***

@@ -7,30 +7,30 @@ import core.Node;
 import core.Visit;
 import exceptions.StopRecursionException;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
 
 
-public class AStar extends BruteForceSolution{
+public class AStar extends BruteForceSolution {
 
     private PriorityQueue<Node> list;
     private String metrix;
 
-    public AStar(Board board, char[] sequence, String metrix) {
-        super(board, sequence);
+    public AStar(Board board, char[] sequence, String metrix, String filename) {
+        super(board, sequence, filename);
         this.metrix = metrix;
-        list = new PriorityQueue<Node>(new ComparatorPriority());
+        list = new PriorityQueue<Node>(10000, new ComparatorPriority());
     }
 
     public void run() {
         startTime = System.currentTimeMillis();
-        if(root.isGoal()) {
-            showStats();
-            stopTime();
-            return;
-        }
         try {
-            astar(root);
+            root.recursionDepth = astar(root);
         } catch (StopRecursionException e) {
+            e.printStackTrace();
         } finally {
             stopTime();
         }
@@ -39,6 +39,13 @@ public class AStar extends BruteForceSolution{
         }
 
         showStats();
+        try {
+            writeSolution(root, metrix);
+            writeStats(root, "astr_" + metrix);
+        } catch (IOException e) {
+            e.getMessage();
+        }
+
     }
 
     @Override
@@ -54,36 +61,46 @@ public class AStar extends BruteForceSolution{
             n = n.parent;
         }
     }
-    public void astar(Node c) throws StopRecursionException {
+
+
+    public short astar(Node c) throws StopRecursionException {
+        HashSet<Node> visited = new HashSet<Node>();
         list.add(c);
-        while(list.size() > 0) {
-            Node n = list.poll();
-            inProgressStateCounter++;
-            n.visit = Visit.VISITED;
-            if(n.recursionDepth < recursionDepthLimit) {
-                n.branch(sequence);
-                for (Node k : n.children) {
+        while (list.size() > 0) {
+            Node nodeToCheck = list.poll();
+            nodeToCheck.visit = Visit.VISITED;
+            visitedStateCounter++;
+            if (nodeToCheck.recursionDepth > recursionDepthLimit) {
+                maxRecursionDepth = nodeToCheck.recursionDepth;
+            }
+            if (nodeToCheck.isGoal()) {
+                sumUpSolution(nodeToCheck);
+                maxRecursionDepth = nodeToCheck.recursionDepth;
+                return nodeToCheck.recursionDepth;
+//              throw new StopRecursionException("Recursion has ended.");
+            }
+            if (nodeToCheck.recursionDepth < recursionDepthLimit) {
+                nodeToCheck.branch(sequence);
+                for (Node k : nodeToCheck.children) {
+                    k.visit = Visit.INPROGRESS;
+                    inProgressStateCounter++;
 //                    System.out.println(k);
-                    if(k.recursionDepth > recursionDepthLimit) {
-                        maxRecursionDepth = k.recursionDepth;
-                    }
-                    if (k.isGoal()) {
-                        sumUpSolution(k);
-                        maxRecursionDepth = k.recursionDepth;
-                        throw new StopRecursionException("Recursion has ended.");
-                    }
-                    if(metrix.compareTo("manh") == 0) {
+
+                    if (metrix.compareTo("manh") == 0) {
                         k.board.manhattan();
-                    }
-                    else {
+                    } else {
                         k.board.hamming();
                     }
-                    k.visit = Visit.VISITED;
-                    visitedStateCounter++;
-                    list.add(k);
+                    if(!visited.contains(k)) {
+                        visited.add(k);
+                        list.add(k);
+                    }
+
                 }
+
             }
         }
+        return -1;
     }
 }
 

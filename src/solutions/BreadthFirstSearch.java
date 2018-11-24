@@ -5,6 +5,7 @@ import core.Node;
 import core.Visit;
 import exceptions.StopRecursionException;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -12,8 +13,8 @@ public class BreadthFirstSearch extends BruteForceSolution {
 
     private Queue<Node> listOfNodes;
 
-    public BreadthFirstSearch(Board board, char[] sequence) {
-        super(board, sequence);
+    public BreadthFirstSearch(Board board, char[] sequence, String filename) {
+        super(board, sequence, filename);
         this.listOfNodes = new LinkedList<>();
     }
 
@@ -26,11 +27,12 @@ public class BreadthFirstSearch extends BruteForceSolution {
                 System.out.println("******SUCCESS*******");
                 stopTime();
                 showStats();
+                write(n);
                 return;
             }
         }
         try {
-            bfs(root);
+            root.recursionDepth = bfs(root);
         } catch (StopRecursionException e) {
         } finally {
             stopTime();
@@ -40,9 +42,20 @@ public class BreadthFirstSearch extends BruteForceSolution {
         }
 
         showStats();
+        write(root);
+
     }
 
-    public void bfs(Node c) throws StopRecursionException {
+    public void write(Node c) {
+        try {
+            writeSolution(c, "bfs" + root.board.getWidth() + "x" + root.board.getHeight() + "_sol");
+            writeStats(c, "bfs" + root.board.getWidth() + "x" + root.board.getHeight() + "_stats" );
+        } catch (IOException e) {
+            e.getMessage();
+        }
+    }
+
+    public short bfs(Node c) throws StopRecursionException {
         c.visit = Visit.INPROGRESS;
         inProgressStateCounter++;
         c.visit = Visit.VISITED;
@@ -50,7 +63,8 @@ public class BreadthFirstSearch extends BruteForceSolution {
 
         if (c.isGoal()) {
             sumUpSolution(c);
-            throw new StopRecursionException("Recursion has ended.");
+            return c.recursionDepth;
+//            throw new StopRecursionException("Recursion has ended.");
         }
 
         for (Node n : c.children) {
@@ -62,7 +76,8 @@ public class BreadthFirstSearch extends BruteForceSolution {
 
             if (n.isGoal()) {
                 sumUpSolution(n);
-                throw new StopRecursionException("Recursion has ended.");
+                return n.recursionDepth;
+//                throw new StopRecursionException("Recursion has ended.");
             }
         }
 
@@ -83,7 +98,8 @@ public class BreadthFirstSearch extends BruteForceSolution {
                 if (n.isGoal()) {
                     sumUpSolution(n);
                     maxRecursionDepth = n.recursionDepth;
-                    throw new StopRecursionException("Recursion has ended.");
+                    return n.recursionDepth;
+//                    throw new StopRecursionException("Recursion has ended.");
                 }
 
                 if (n.recursionDepth <= recursionDepthLimit) {
@@ -92,6 +108,7 @@ public class BreadthFirstSearch extends BruteForceSolution {
                 }
             }
         }
+        return -1;
     }
 
     @Override

@@ -5,8 +5,12 @@ import core.Movement;
 import core.Node;
 import exceptions.StopRecursionException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public abstract class BruteForceSolution implements ISolver {
     protected Board board;
@@ -21,18 +25,20 @@ public abstract class BruteForceSolution implements ISolver {
     protected static long startTime;
     protected static long endTime;
     protected static long estimatedTime;
+    protected String filename;
 
-    public BruteForceSolution(Board board, char[] sequence) {
+    public BruteForceSolution(Board board, char[] sequence, String filename) {
         this.board = board;
         this.root = new Node(board, Movement.NONE, null, (short) -1);
         this.sequence = sequence;
         this.moves = new ArrayList<>();
+        this.filename = filename;
     }
 
     @Override
-    abstract public void run();
+    abstract public void run() throws IOException;
 
-    protected abstract void sumUpSolution(Node c) throws StopRecursionException;
+    protected abstract void sumUpSolution(Node c) throws StopRecursionException, IOException;
 
     protected void stopTime() {
         endTime = System.currentTimeMillis();
@@ -74,4 +80,26 @@ public abstract class BruteForceSolution implements ISolver {
         }
         return sequence.toString();
     }
-}
+
+    public void writeStats(Node n, String nameSol) throws IOException
+    {
+        String stats = n.recursionDepth + System.lineSeparator() + visitedStateCounter + System.lineSeparator() + inProgressStateCounter + System.lineSeparator() +
+                 maxRecursionDepth + System.lineSeparator() + estimatedTime;
+        String workingDir = System.getProperty("user.dir");
+        File file = new File(workingDir + "\\src\\outFiles\\" + filename.substring(0,filename.length() - 4) + "_" + nameSol + "_sol.txt");
+        FileOutputStream outputStream = new FileOutputStream(file);
+        byte[] strToBytes = stats.getBytes();
+        outputStream.write(strToBytes);
+        outputStream.close();
+    }
+
+    public void writeSolution(Node n, String nameSol) throws IOException
+    {
+        String solution = n.recursionDepth + System.lineSeparator() + showMovesListAsSequence();
+        String workingDir = System.getProperty("user.dir");
+        File file = new File(workingDir + "\\src\\outFiles\\" + filename.substring(0,filename.length() - 4) + "_" + nameSol + "_stats.txt");
+        FileOutputStream outputStream = new FileOutputStream(file);
+        byte[] strToBytes = solution.getBytes();
+        outputStream.write(strToBytes);
+        outputStream.close();
+    }}
