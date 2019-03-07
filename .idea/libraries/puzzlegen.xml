@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="puzzlegen">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../puzzlegen.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../puzzleval.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
